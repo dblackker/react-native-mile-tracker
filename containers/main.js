@@ -6,19 +6,16 @@ import React, { Component } from 'react';
 import { Text, Navigator } from 'react-native';
 import LogList from '../components/loglist';
 import LogForm from '../components/logform';
+import store from '../stores/logstore';
 
 export default class Main extends Component {
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      logs: [{
-        date: '1/1/1900',
-        miles: 7,
-      }, {
-        date: '1/2/1920',
-        miles: 10,
-      }],
-    };
+    this.state = store.getState();
+
+    store.subscribe(() => {
+      this.setState(store.getState());
+    });
   }
 
   onAddStarted() {
@@ -29,11 +26,15 @@ export default class Main extends Component {
   }
 
   onAdd(log) {
-    this.state.logs.push({
-      date: log.date,
-      miles: log.miles,
+    store.dispatch({
+      type: 'ADD_LOG',
+      log,
     });
-    this.setState({ logs: this.state.logs });
+    // this.state.logs.push({
+    //   date: log.date,
+    //   miles: log.miles,
+    // });
+    // this.setState({ logs: this.state.logs });
     this.nav.pop();
   }
 
